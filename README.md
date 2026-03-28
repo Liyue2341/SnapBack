@@ -1,13 +1,8 @@
-<h1 align="center">
-  <br>
-  SnapBack
-  <br>
-</h1>
-
-<h4 align="center">Save & restore your entire Windows session with one command.</h4>
+<h1 align="center">SnapBack</h1>
 
 <p align="center">
-  Because life's too short to reopen 20 windows after every reboot.
+  <strong>Save & restore your entire Windows session with one command.</strong><br>
+  <sub>Because life's too short to reopen 20 windows after every reboot.</sub>
 </p>
 
 <p align="center">
@@ -15,57 +10,42 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/platform-Windows%2010%2F11-0078D4?style=flat-square&logo=windows&logoColor=white" alt="Platform">
-  <img src="https://img.shields.io/badge/PowerShell-5.1%2B-5391FE?style=flat-square&logo=powershell&logoColor=white" alt="PowerShell">
+  <img src="https://img.shields.io/badge/Windows%2010%2F11-0078D4?style=flat-square&logo=windows&logoColor=white" alt="Platform">
+  <img src="https://img.shields.io/badge/PowerShell%205.1%2B-5391FE?style=flat-square&logo=powershell&logoColor=white" alt="PowerShell">
   <img src="https://img.shields.io/github/license/Liyue2341/SnapBack?style=flat-square" alt="License">
   <img src="https://img.shields.io/github/stars/Liyue2341/SnapBack?style=flat-square" alt="Stars">
 </p>
 
 ---
 
-## The Problem
-
-You know the drill:
-
-> 4 terminals running servers. 3 Claude Code sessions across different projects. WeChat open. A dozen browser tabs. File Explorer windows everywhere.
->
-> Then Windows says: **"Restart to finish installing updates."**
-
-You restart. **Everything's gone.** Now you spend 15 minutes rebuilding your workspace from memory. _Every. Single. Time._
-
-## The Solution
+## Quick Start
 
 ```powershell
-snapback save        # before reboot - takes 3 seconds
-# ... reboot ...
+# Install (one-time)
+git clone https://github.com/Liyue2341/SnapBack.git
+cd SnapBack && .\install.ps1
+
+# Use (every time)
+snapback save        # before reboot
 snapback restore     # after reboot - everything comes back
 ```
 
-That's it. Seriously.
+That's it. Restart your terminal after install. Works from anywhere.
 
 ---
 
-## What Gets Saved
+## What It Restores
 
-| Category | What's Captured |
-|:---------|:---------------|
-| 🖥️ **GUI Apps** | WeChat, browsers, MarkView, etc. |
-| ⌨️ **Terminal Processes** | Python servers, Node.js, SSH sessions, ngrok tunnels |
-| 🤖 **Claude Code** | Every instance, in the correct project directory, supports multiple instances per folder |
-| 📁 **File Explorer** | All open folder windows |
-| 📂 **Working Directories** | Real CWD via Windows PEB API + parent shell walking |
+🖥️ GUI apps (WeChat, browsers, etc.) &bull; ⌨️ Terminal processes (Python, Node, SSH, ngrok) &bull; 🤖 Claude Code (every instance, correct directory, multi-instance support) &bull; 📁 All open File Explorer windows
 
-> Auto-start programs (PowerToys, OneDrive, Notion...) are automatically excluded - they restart on their own.
+> Auto-start apps (PowerToys, OneDrive, Notion...) are automatically excluded.
 
 ---
 
 ## Demo
 
-**`snapback save`** — snapshot your workspace:
 ```
-PS C:\> snapback save
-
-  SnapBack - Save & Restore your Windows session
+PS> snapback save
 
   Capturing running processes...
   Capturing Explorer windows...
@@ -75,19 +55,8 @@ PS C:\> snapback save
   Explorer folders:  4
 ```
 
-**`snapback restore`** — bring everything back:
 ```
-PS C:\> snapback restore
-
-  Programs to restore:
-    - Weixin       @ C:\Program Files (x86)\Tencent\Weixin
-    - claude       @ D:\Projects\my-app
-    - claude (x2)  @ D:\Projects\backend
-    - python       @ D:\Projects\backend
-    - ssh          @ D:\Projects\server
-    - markview     @ D:\Research\paper
-
-  Restore these programs? [Y/n] Y
+PS> snapback restore
 
   [OK]   Weixin
   [OK]   claude @ D:\Projects\my-app
@@ -95,138 +64,100 @@ PS C:\> snapback restore
   [OK]   claude @ D:\Projects\backend (2/2)
   [OK]   python @ D:\Projects\backend
   [OK]   ssh @ D:\Projects\server
-  [OK]   markview @ D:\Research\paper
 
   Restoring Explorer folders...
   [OK]   D:\Projects\my-app
   [OK]   D:\Projects\backend
 
-  Restore complete:
-    Restored: 8
-    Folders:  2
-    Skipped:  0
-    Failed:   0
+  Restore complete: Restored 8, Folders 2
 ```
-
-**`snapback list`** — manage your snapshots:
-```
-PS C:\> snapback list
-
-  Available Snapshots:
-  ------------------------------------------------------------
-  [1] work_env     |  2026-03-28 14:30:22  |  14 processes (latest)
-  [2] before_update|  2026-03-27 09:15:03  |  11 processes
-```
-
----
-
-## Installation
-
-```powershell
-git clone https://github.com/Liyue2341/SnapBack.git
-cd SnapBack
-.\install.ps1       # adds 'snapback' to your PATH
-```
-
-Restart your terminal. Done. Use `snapback` from anywhere.
-
-> **Requirements:** Windows 10/11 + PowerShell 5.1+ (pre-installed on all modern Windows)
 
 ---
 
 ## All Commands
 
-| Command | Description |
-|:--------|:------------|
+| Command | What it does |
+|:--------|:-------------|
 | `snapback save` | Save current session |
 | `snapback restore` | Restore latest snapshot |
 | `snapback list` | List all snapshots |
 | `snapback show` | Show snapshot details |
-| `snapback save -Name work` | Save with custom name |
-| `snapback restore -Name work` | Restore specific snapshot |
-| `snapback delete -Name work` | Delete a snapshot |
-| `snapback help` | Show help |
+| `snapback save -Name dev` | Save with a custom name |
+| `snapback restore -Name dev` | Restore a specific snapshot |
+| `snapback delete -Name dev` | Delete a snapshot |
 
 ---
 
-## How It Works
+<details>
+<summary><strong>How It Works (click to expand)</strong></summary>
 
 ### Save
-1. Queries all running processes via WMI/CIM
-2. Filters out system processes, child processes (renderers, GPU, crashpad), and auto-start apps
-3. Detects **real working directories** by walking up the process tree to the parent shell and reading its CWD via the Windows PEB API (`NtQueryInformationProcess`)
-4. Captures open File Explorer windows via COM `Shell.Application`
-5. Saves everything as a JSON snapshot
+1. Queries running processes via WMI/CIM, filters out system/child/auto-start processes
+2. Detects **real working directories** by walking up the process tree to the parent shell and reading its CWD via the Windows PEB API (`NtQueryInformationProcess`)
+3. Captures open File Explorer windows via COM `Shell.Application`
+4. Saves everything as JSON
 
 ### Restore
-1. Pre-fetches all running processes for fast matching
-2. **GUI apps** (browser, WeChat): skips if any instance is already running
-3. **CLI tools** (claude, python, node): matches by exact command-line, supports multi-instance restore
-4. Relaunches each process with original arguments and working directory
-5. Reopens all Explorer folder windows
+1. GUI apps (browser, WeChat): skips if already running
+2. CLI tools (claude, python, node): matches by command-line arguments, supports multi-instance
+3. Relaunches each process with original arguments and working directory
+4. Reopens all Explorer folder windows
 
 ### Architecture
 ```
 SnapBack/
-├── snapback.ps1          # CLI entry point
-├── config.json           # Exclude lists & settings
-├── install.ps1           # One-click global installer
+├── snapback.ps1       # CLI entry point
+├── config.json        # Exclude lists & settings
+├── install.ps1        # One-click global installer
 └── lib/
-    ├── Snapshot.ps1      # Process capture, CWD detection, Explorer capture
-    └── Restore.ps1       # Smart restore with duplicate detection
+    ├── Snapshot.ps1    # Process capture, CWD detection
+    └── Restore.ps1    # Smart restore with duplicate detection
 ```
+</details>
 
----
-
-## Configuration
+<details>
+<summary><strong>Configuration (click to expand)</strong></summary>
 
 Edit `config.json` to customize:
 
 ```jsonc
 {
-  "excludeProcesses": [...],       // System processes to always ignore
+  "excludeProcesses": [...],       // System processes to ignore
   "autoStartProcesses": [...],     // Apps that restart on their own
   "excludeArgPatterns": [...],     // Filter by command-line patterns
-  "excludePathPatterns": [...],    // Filter by executable path
   "maxSnapshots": 20,              // Auto-cleanup old snapshots
   "restoreDelayMs": 500,           // Delay between launches (ms)
   "confirmBeforeRestore": true     // Prompt before restoring
 }
 ```
+</details>
 
----
+<details>
+<summary><strong>Known Limitations</strong></summary>
 
-## Known Limitations
-
-- Terminal **scrollback / command history** is not preserved — only running processes
-- **Window positions and sizes** are not restored (yet)
-- **Windows Terminal tabs** restore as individual processes, not grouped tabs
+- Terminal scrollback / command history is not preserved — only running processes
+- Window positions and sizes are not restored (yet)
+- Windows Terminal tabs restore as individual processes, not grouped tabs
 - SSH sessions requiring interactive auth will prompt for credentials again
 
 PRs and ideas welcome!
+</details>
 
 ---
 
-## Support the Project
+## Support
 
-If SnapBack saved you from the _"15-minute workspace rebuild ritual,"_ consider supporting the project:
+If SnapBack saved you from the _"15-minute workspace rebuild ritual"_:
 
 <p align="center">
   <a href="https://buymeacoffee.com/liyue2341" target="_blank">
-    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me Some Tokens" height="60">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me Some Tokens" height="50">
   </a>
-</p>
-
-<p align="center">
-  <sub>Every token helps fuel more open-source tools. Thank you! 🪙</sub>
 </p>
 
 ---
 
-## License
-
-[MIT](LICENSE) — use it, fork it, improve it.
-
 <p align="center">
-  <sub>Built with frustration and PowerShell.<br>⭐ Star this repo if you've been there too.</sub>
+  <a href="LICENSE">MIT License</a> &bull; Built with frustration and PowerShell<br>
+  ⭐ Star if you've been there too
 </p>
