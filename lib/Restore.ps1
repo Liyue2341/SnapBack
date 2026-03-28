@@ -193,13 +193,21 @@ function Restore-Snapshot {
                 $startParams["WorkingDirectory"] = $proc.WorkingDir
             }
 
-            Start-Process @startParams
-            Write-Host "  [OK]   $displayName" -ForegroundColor Green
-            $restored++
+            $count = if ($proc.InstanceCount -and $proc.InstanceCount -gt 1) { $proc.InstanceCount } else { 1 }
+            for ($i = 0; $i -lt $count; $i++) {
+                Start-Process @startParams
+                if ($count -gt 1) {
+                    Write-Host "  [OK]   $displayName ($($i+1)/$count)" -ForegroundColor Green
+                }
+                else {
+                    Write-Host "  [OK]   $displayName" -ForegroundColor Green
+                }
+                $restored++
 
-            # Delay between launches to avoid overwhelming the system
-            if ($Config.restoreDelayMs -gt 0) {
-                Start-Sleep -Milliseconds $Config.restoreDelayMs
+                # Delay between launches to avoid overwhelming the system
+                if ($Config.restoreDelayMs -gt 0) {
+                    Start-Sleep -Milliseconds $Config.restoreDelayMs
+                }
             }
         }
         catch {

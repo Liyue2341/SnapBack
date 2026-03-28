@@ -92,6 +92,7 @@ switch ($Command) {
                 Write-Host "  Processes:" -ForegroundColor Cyan
                 foreach ($proc in $data.processes) {
                     $display = "    - $($proc.Name)"
+                    if ($proc.InstanceCount -gt 1) { $display += " (x$($proc.InstanceCount))" }
                     if ($proc.MainWindowTitle) { $display += " [$($proc.MainWindowTitle)]" }
                     Write-Host $display -ForegroundColor White
                     if ($proc.WorkingDir) {
