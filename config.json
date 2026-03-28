@@ -1,0 +1,62 @@
+{
+  "snapshotDir": "%USERPROFILE%\\.snapback\\snapshots",
+  "maxSnapshots": 20,
+  "excludeProcesses": [
+    "svchost", "csrss", "wininit", "winlogon", "lsass", "services",
+    "smss", "System", "Idle", "Registry", "Memory Compression",
+    "dwm", "fontdrvhost", "sihost", "taskhostw", "ctfmon",
+    "RuntimeBroker", "ShellExperienceHost", "StartMenuExperienceHost",
+    "SearchHost", "SearchIndexer", "SecurityHealthService",
+    "SgrmBroker", "spoolsv", "WmiPrvSE", "dllhost",
+    "conhost", "CompPkgSrv", "TextInputHost", "WidgetService",
+    "SystemSettings", "LockApp",
+    "NisSrv", "MsMpEng", "MpDefenderCoreService",
+    "msedgewebview2", "crashpad_handler",
+    "FileCoAuth", "OneDrive.Sync.Service",
+    "hpwuschd2", "EEventManager", "nierserver", "sldworks_fs",
+    "AdobeNotificationClient", "UnInstDaemon",
+    "YunDetectService",
+    "WeChatAppEx",
+    "adb",
+    "bash",
+    "cmd",
+    "powershell",
+    "pwsh",
+    "WindowsTerminal",
+    "git",
+    "snapback"
+  ],
+  "autoStartProcesses": [
+    "PowerToys", "PowerToys.AlwaysOnTop", "PowerToys.Awake",
+    "PowerToys.ColorPickerUI", "PowerToys.CropAndLock",
+    "PowerToys.FancyZones", "PowerToys.Peek.UI", "PowerToys.PowerLauncher",
+    "logioptionsplus_agent", "LogiBolt",
+    "OneDrive",
+    "Everything",
+    "GoogleDriveFS",
+    "MacKMLink",
+    "wetype_update", "wetype_server",
+    "NutstoreClient", "nutstore_watchdog",
+    "Nutstore.WindowsHook", "Nutstore.Client.Badge",
+    "Nutstore.ZoteroPlugin",
+    "Notion",
+    "parsecd"
+  ],
+  "excludeArgPatterns": [
+    "--type=wx*",
+    "--type=crashpad*",
+    ".claude/shell-snapshots",
+    "jest-worker",
+    "fork-server server"
+  ],
+  "excludePathPatterns": [
+    "*\\AnthropicClaude\\app-*"
+  ],
+  "excludePaths": [
+    "C:\\Windows\\*",
+    "C:\\Windows\\System32\\*",
+    "C:\\Program Files\\Windows*"
+  ],
+  "restoreDelayMs": 500,
+  "confirmBeforeRestore": true
+}

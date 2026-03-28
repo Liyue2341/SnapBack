@@ -1,0 +1,16 @@
+# Snapshots (user data, don't commit)
+snapshots/
+
+# PowerShell module artifacts
+*.psd1.bak
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
